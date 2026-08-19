@@ -1,0 +1,196 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+<title>IMessenger</title>
+<meta name="theme-color" content="#0b0f14" />
+<link rel="manifest" href="manifest.json" />
+<link rel="icon" href="icons/icon-192.png" />
+<link rel="apple-touch-icon" href="icons/icon-192.png" />
+<meta name="apple-mobile-web-app-capable" content="yes" />
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+<link rel="stylesheet" href="css/style.css" />
+</head>
+<body>
+
+<div id="maintenance-screen" class="maintenance-screen hidden">
+  <div class="maintenance-card">
+    <div class="maintenance-icon">🚧</div>
+    <h1>Server under construction</h1>
+    <p>We'll be back shortly. Check back soon.</p>
+    <form id="maintenance-unlock-form" class="hidden">
+      <input type="password" id="maintenance-password-input" placeholder="Password" autocomplete="off" />
+      <button type="submit">Unlock</button>
+    </form>
+    <p class="error" id="maintenance-error"></p>
+  </div>
+  <button id="maintenance-unlock-btn" title="Tester access">🔓</button>
+</div>
+
+<div id="install-banner" class="install-banner hidden">
+  <span id="install-banner-text"></span>
+  <button id="install-action-btn" class="hidden">Install</button>
+  <button id="install-dismiss-btn" title="Dismiss">✕</button>
+</div>
+
+<!-- Auth screen -->
+<section id="auth-screen" class="screen">
+  <div class="auth-card">
+    <h1>IMessenger</h1>
+    <div class="tabs">
+      <button class="tab-btn active" data-tab="login">Log in</button>
+      <button class="tab-btn" data-tab="register">Sign up</button>
+    </div>
+
+    <form id="login-form" class="tab-panel active">
+      <label>Username <input type="text" id="login-username" autocomplete="username" required /></label>
+      <label>Password <input type="password" id="login-password" autocomplete="current-password" required /></label>
+      <button type="submit">Log in</button>
+      <p class="error" id="login-error"></p>
+    </form>
+
+    <form id="register-form" class="tab-panel">
+      <label>Username <input type="text" id="register-username" autocomplete="username" required /></label>
+      <label>Display name <input type="text" id="register-displayname" autocomplete="name" /></label>
+      <label>Password <input type="password" id="register-password" autocomplete="new-password" required /></label>
+      <button type="submit">Create account</button>
+      <p class="error" id="register-error"></p>
+    </form>
+
+    <button id="open-settings-from-auth" class="link-btn">Server settings</button>
+  </div>
+</section>
+
+<!-- Main app -->
+<section id="app-screen" class="screen hidden">
+  <aside id="sidebar">
+    <header class="sidebar-header">
+      <span id="me-name"></span>
+      <div class="sidebar-actions">
+        <button id="reload-btn" title="Refresh">🔄</button>
+        <button id="new-dm-btn" title="New direct message">✉️</button>
+        <button id="new-group-btn" title="New group">👥</button>
+        <button id="admin-btn" class="hidden" title="Admin panel">🛡️</button>
+        <button id="settings-btn" title="Settings">⚙️</button>
+      </div>
+    </header>
+    <div id="conversation-list"></div>
+  </aside>
+
+  <main id="chat-panel">
+    <div id="chat-empty" class="empty-state">Select a conversation, or start a new one.</div>
+    <div id="chat-active" class="hidden">
+      <header id="chat-header">
+        <button id="back-btn" class="mobile-only">←</button>
+        <h2 id="chat-title"></h2>
+        <span id="chat-status-dot" class="status-dot hidden"></span>
+        <button id="block-btn" class="hidden" title="Block user">🚫</button>
+        <button id="group-info-btn" class="hidden" title="Group info">👥</button>
+      </header>
+      <div id="messages"></div>
+      <div id="typing-indicator" class="hidden"></div>
+      <div id="reply-preview" class="hidden">
+        <span id="reply-preview-text"></span>
+        <button id="reply-cancel-btn">✕</button>
+      </div>
+      <form id="message-form">
+        <label id="image-picker-label" for="image-input" title="Attach image">📎</label>
+        <input type="file" id="image-input" accept="image/*" hidden />
+        <img id="image-preview" class="hidden" />
+        <button type="button" id="clear-image-btn" class="hidden">✕</button>
+        <input type="text" id="message-input" placeholder="Message" autocomplete="off" maxlength="2000" />
+        <button type="submit">Send</button>
+      </form>
+    </div>
+  </main>
+</section>
+
+<!-- New DM modal -->
+<div id="new-dm-modal" class="modal hidden">
+  <div class="modal-card">
+    <h3>New direct message</h3>
+    <input type="text" id="dm-search-input" placeholder="Search username..." />
+    <div id="dm-search-results"></div>
+    <button class="close-modal">Cancel</button>
+  </div>
+</div>
+
+<!-- New group modal -->
+<div id="new-group-modal" class="modal hidden">
+  <div class="modal-card">
+    <h3>New group</h3>
+    <input type="text" id="group-name-input" placeholder="Group name" />
+    <input type="text" id="group-search-input" placeholder="Search username to add..." />
+    <div id="group-search-results"></div>
+    <div id="group-selected-members"></div>
+    <button id="create-group-btn">Create group</button>
+    <button class="close-modal">Cancel</button>
+  </div>
+</div>
+
+<!-- Group info / management modal -->
+<div id="manage-group-modal" class="modal hidden">
+  <div class="modal-card">
+    <h3>Group info</h3>
+
+    <div id="manage-group-owner-only" class="hidden">
+      <label>Group name <input type="text" id="group-rename-input" /></label>
+      <button id="group-rename-btn">Rename</button>
+      <hr />
+      <input type="text" id="manage-group-search-input" placeholder="Search username to add..." />
+      <div id="manage-group-search-results"></div>
+      <div id="manage-group-selected"></div>
+      <button id="manage-group-add-btn">Add to group</button>
+      <hr />
+    </div>
+
+    <div id="manage-group-members"></div>
+
+    <button id="leave-group-btn" class="danger">Leave group</button>
+    <button class="close-modal">Close</button>
+    <p class="error" id="manage-group-error"></p>
+  </div>
+</div>
+
+<!-- Admin panel -->
+<div id="admin-modal" class="modal hidden">
+  <div class="modal-card">
+    <h3>Admin panel</h3>
+    <input type="text" id="admin-search-input" placeholder="Search username..." />
+    <div id="admin-user-list"></div>
+    <button class="close-modal">Close</button>
+    <p class="error" id="admin-error"></p>
+  </div>
+</div>
+
+<!-- Settings modal -->
+<div id="settings-modal" class="modal hidden">
+  <div class="modal-card">
+    <h3>Settings</h3>
+    <label>Message server URL
+      <input type="text" id="server-url-input" placeholder="https://your-backend.example.com" />
+    </label>
+    <p class="hint">This is the address of your imessenger backend server (Railway, Whispbyte, your own VPS, etc).</p>
+    <button id="save-server-url-btn">Save</button>
+    <hr />
+    <button id="enable-push-btn">Enable notifications</button>
+    <hr />
+    <h4>Change password</h4>
+    <input type="password" id="current-password-input" placeholder="Current password" autocomplete="current-password" />
+    <input type="password" id="new-password-input" placeholder="New password (min 8 characters)" autocomplete="new-password" />
+    <button id="change-password-btn">Update password</button>
+    <p class="error" id="password-change-error"></p>
+    <hr />
+    <h4>Blocked users</h4>
+    <div id="blocked-users-list"></div>
+    <hr />
+    <button id="logout-btn" class="danger">Log out</button>
+    <button class="close-modal">Close</button>
+    <p class="error" id="settings-error"></p>
+  </div>
+</div>
+
+<script src="js/main.js" type="module"></script>
+</body>
+</html>
