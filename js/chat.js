@@ -12,7 +12,7 @@ import {
 } from './conversations.js';
 
 const MAX_IMAGE_BYTES = 3 * 1024 * 1024;
-const REACTION_CHOICES = ['👍', '❤️', '😂', '😭', '🔥', '👀', '🐳', '💀', '🍑', '🍆', '😩', '🤔'];
+const REACTION_CHOICES = ['👍', '❤️', '😂', '😭', '🔥', '👀', '🐳', '💀', '🍑', '🍆', '😩', '🤔', '🥀'];
 
 let pendingImageDataUrl = null;
 let typingTimeout = null;
