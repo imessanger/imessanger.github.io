@@ -243,6 +243,12 @@ button.link-btn { background: none; color: var(--muted); text-decoration: underl
   padding: 1px 8px; font-size: 12.5px; cursor: default;
 }
 
+/* ---- Version footer ---- */
+.app-version {
+  text-align: center; font-size: 11px; color: var(--muted); opacity: 0.6;
+  padding: 8px 0 2px;
+}
+
 /* ---- Responsive ---- */
 @media (max-width: 760px) {
   #sidebar { width: 100%; min-width: 0; }
