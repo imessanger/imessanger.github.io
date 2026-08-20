@@ -5,8 +5,8 @@ const DEFAULT_SERVER_URL = 'https://imessanger-backend-production.up.railway.app
 // screen to everyone. This is NOT real security - the password lives in
 // this file, shipped to every visitor's browser. It's just a polite wall to
 // keep casual visitors out while testers/you can tap through.
-const MAINTENANCE_MODE = false;
-const MAINTENANCE_PASSWORD = 'instantunlock';
+const MAINTENANCE_MODE = true;
+const MAINTENANCE_PASSWORD = 'commitchanges';
 
 export function isMaintenanceMode() {
   return MAINTENANCE_MODE;
